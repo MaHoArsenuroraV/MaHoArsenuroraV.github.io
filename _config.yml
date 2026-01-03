@@ -2,7 +2,7 @@
 #   Main Configs   #
 # ---------------- #
 baseurl:
-url: https://MaHoAuroraAsV.github.io
+url: https://MaHoArsenuroraV.github.io
 date_format: "ordinal"
 title: AsV
 subtitle: "Welcome to my blog :D"
@@ -13,7 +13,7 @@ encoding: "utf-8"
 # 页面左下角显示的年份
 since: 2024
 # 源码仓库，请替换成自己的
-repository: https://MaHoAuroraAsV/MaHoAuroraAsV.github.io
+repository: https://MaHoArsenuroraV/MaHoArsenuroraV.github.io
 # 对 css 和 js 资源的 cdn 加速配置
 cdn:
     jsdelivr:
@@ -60,7 +60,7 @@ highlight_theme: github
 author: AsV
 organization: 
 organization_url: 
-github_username: MaHoAuroraAsV
+github_username: MaHoArsenuroraV
 location: Beijing, China
 email: asv3551719518@gmail.com
 
@@ -184,7 +184,7 @@ beaudar:
     repo: mzlogin/blog-comments
 # giscus 配置参考：https://giscus.app/zh-CN
 giscus:
-    repo: MaHoAuroraAsV/MaHoAuroraAsV.github.io
+    repo: MaHoArsenuroraV/MaHoArsenuroraV.github.io
     repo-id: R_kgDOM50_jQ
     category: Q&A
     category-id: DIC_kwDOM50_jc4Ci9Up
