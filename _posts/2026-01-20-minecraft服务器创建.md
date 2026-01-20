@@ -24,26 +24,29 @@ Minecraft服务器的创建及部分答疑
         java -Xmx最大内存 -Xms最小内存 -jar server.jar nogui
         pause
         ```
+
 ## 可能遇到的问题
+
 1. java版本不匹配导致的闪退：
-      手动设置对应java版本的路径或将对应版本设为系统全局变量
-      ```
-      "java.exe所在路径"
-      ```
-      1.20.5 及以上:  Java 21
-      1.18 - 1.20.4:  Java 17
-      1.16.5 及以下:  Java 8
+   手动设置对应java版本的路径或将对应版本设为系统全局变量
+   ```
+   "java.exe所在路径"
+   ```
+   1.20.5 及以上:  Java 21
+   1.18 - 1.20.4:  Java 17
+   1.16.5 及以下:  Java 8
 
 
 <br />
 
 # 二、forge/fabric端服务器的创建
+
 1. 从 https://files.minecraftforge.net/net/minecraftforge/forge/ 下载所需版本对应的服务器核心，若网络问题无法加载广告 可复制下载链接将前半部分移除直接下载
 2. <font color=blue><b>(forge1.17以前或fabric)</b></font>:
    使用开服脚本进行开服，大体如原版，只需将server.jar替换为你所安装的forge/fabric核心名
 3. <font color=blue><b>(forge1.17以后)</b></font>
    开服脚本需要略加修改，添加参数引导
-   
+
    <pre>
    <code>
    java @user_jvm_args.txt @libraries/net/minecraftforge/forge/<font color=blue>forge详细版本(可在libraries内找到)</font>/win_args.txt %*
@@ -52,6 +55,7 @@ Minecraft服务器的创建及部分答疑
    </pre>
 
 ### 可能遇到的问题
+
 1. java版本不匹配导致的闪退:
    解决方法同上，但java引导需与参数引导位于同一行，如:
 
