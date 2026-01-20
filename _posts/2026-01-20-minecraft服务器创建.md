@@ -8,6 +8,8 @@ mermaid: true
 mathjax: true
 ---
 
+Minecraft服务器的创建及部分答疑
+
 # 一、原版纯净服务器的创建
 1. 从 https://mcversions.net/ 下载所需版本的服务器核心
 2. &emsp;
@@ -41,6 +43,7 @@ mathjax: true
    使用开服脚本进行开服，大体如原版，只需将server.jar替换为你所安装的forge/fabric核心名
 3. <font color=blue><b>(forge1.17以后)</b></font>
    开服脚本需要略加修改，添加参数引导
+   
    <pre>
    <code>
    java @user_jvm_args.txt @libraries/net/minecraftforge/forge/<font color=blue>forge详细版本(可在libraries内找到)</font>/win_args.txt %*
@@ -51,6 +54,7 @@ mathjax: true
 ### 可能遇到的问题
 1. java版本不匹配导致的闪退:
    解决方法同上，但java引导需与参数引导位于同一行，如:
+
    <pre>
    <code>
    "<font color=blue>java所在路径</font>" @user_jvm_args.txt @libraries/net/minecraftforge/forge/<font color=blue>forge详细版本(可在libraries内找到)/win_args.txt %*
