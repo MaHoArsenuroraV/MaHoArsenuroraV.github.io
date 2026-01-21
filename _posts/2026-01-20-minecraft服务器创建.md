@@ -11,7 +11,7 @@ mathjax: true
 Minecraft服务器的创建及部分答疑
 
 # 一、原版纯净服务器的创建
-1. 从 https://mcversions.net/ 下载所需版本的服务器核心
+1. 从 <https://mcversions.net/> 下载所需版本的服务器核心
 2. &emsp;
     1. 直接开服
         <font color=blue>此方法无法调整内存大小限制，且未对低版本的可行性进行测试，建议使用脚本开服</font>
@@ -32,18 +32,16 @@ Minecraft服务器的创建及部分答疑
    ```
    "java.exe所在路径"
    ```
-| 游戏版本 | Java 版本 |
-| :--- | :--- |
-| 1.20.5 及以上 | Java 21 |
-| 1.18 - 1.20.4 | Java 17 |
-| 1.16.5 及以下 | Java 8 |
+   1.20.5 及以上:  Java 21<br>
+   1.18 - 1.20.4:  Java 17<br>
+   1.16.5 及以下:  Java 8<br>
 
 
 <br />
 
 # 二、forge/fabric端服务器的创建
 
-1. 从 https://files.minecraftforge.net/net/minecraftforge/forge/ 下载所需版本对应的服务器核心，若网络问题无法加载广告 可复制下载链接将前半部分移除直接下载
+1. 从 <https://files.minecraftforge.net/net/minecraftforge/forge/> 下载所需版本对应的服务器核心，若网络问题无法加载广告 可复制下载链接将前半部分移除直接下载
 2. <font color=blue><b>(forge1.17以前或fabric)</b></font>:
    使用开服脚本进行开服，大体如原版，只需将server.jar替换为你所安装的forge/fabric核心名
 3. <font color=blue><b>(forge1.17以后)</b></font>
