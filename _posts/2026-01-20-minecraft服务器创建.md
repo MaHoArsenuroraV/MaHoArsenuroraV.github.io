@@ -62,6 +62,6 @@ Minecraft服务器的创建及部分答疑
 
    <pre>
    <code>
-   "<font color=blue>java所在路径</font>" @user_jvm_args.txt @libraries/net/minecraftforge/forge/<font color=blue>forge详细版本(可在libraries内找到)/win_args.txt %*
+   "<font color=blue>java所在路径</font>" @user_jvm_args.txt @libraries/net/minecraftforge/forge/<font color=blue>forge详细版本(可在libraries内找到)</font>/win_args.txt %*
    </code>
    </pre>
