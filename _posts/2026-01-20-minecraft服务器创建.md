@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Minecraft服务器创建
-categories: Games-server
+categories: Games
 description: null
 keywards: games,server,java
 mermaid: true
