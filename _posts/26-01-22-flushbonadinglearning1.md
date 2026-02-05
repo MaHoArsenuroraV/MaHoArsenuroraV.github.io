@@ -2,8 +2,8 @@
 layout: post
 title: STM入门学习记录1
 categories: STM32
-description: 开营期间所做记录
-keywards: note,record
+description: STM入门学习记录
+keywards: note,record,STM32
 mermaid: true
 mathjax: true
 ---
@@ -17,6 +17,7 @@ STM32入门学习记录1：新建工程与点灯
 ### 面包板
 内部构造：    
 数字为行 字母为列；行内相连，列内隔断，上下为电源正负极，可任取一边/两边使用  
+供电行划线处均相连
 
 ### stm32开发方式  
 - 寄存器
