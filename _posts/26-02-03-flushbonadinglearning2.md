@@ -59,7 +59,7 @@ P-MOS和N-MOS均有效，且有强驱动能力，故推挽输出也叫强推模�
 ### 4. GPIO八大模式
 同[前文]({% post_url 26-01-22-flushbonadinglearning1 %})提及
 
-<center>
+<center markdown="1">
 
 | 模式名称 | 性质 | 特征 |
 | :---: | :---: | :---: |
