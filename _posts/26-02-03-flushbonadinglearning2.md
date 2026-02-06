@@ -1,14 +1,14 @@
 ---
 layout: post
 title: STM入门学习记录2
-categories: STM32
+categories: [STM32, c语言]
 description: STM入门学习记录
-keywards: note,record,STM32
+keywards: note,record,STM32,c语言
 mermaid: true
 mathjax: true
 ---
 
-STM32入门学习记录2：GPIO输出
+STM32入门学习记录2：GPIO输出、输入
 
 学习自江协科技 [STM32入门教程-2023版 细致讲解 中文字幕](https://www.bilibili.com/video/BV1th411z7sn/?p=4&share_source=copy_web&vd_source=67b9019751b1734c92e834bdee04be24)
 
@@ -100,7 +100,7 @@ P-MOS和N-MOS均有效，且有强驱动能力，故推挽输出也叫强推模�
 ### 大功率外设
 IO口控制驱动电路间接控制，如三极管，PNP低电平，NPN反之(发射结正偏)
 
-# 三、程序实例
+# 三、程序实例-GPIO输出
 
 ### 1. LED闪烁
 1. 使能时钟，配置端口模式
@@ -132,3 +132,14 @@ IO口控制驱动电路间接控制，如三极管，PNP低电平，NPN反之(�
 
 ### 3. 蜂鸣器
 用法同上
+
+# 四、GPIO输入
+### 1. 配件
+#### 1.1 按键
+按下导通，松开断开
+**由于内部为机械片，按下会导致几毫秒的机械抖动，故需要进行抖动过滤，否则可能会导致一次按松多次触发，可以设延时解决这一问题**
+#### 1.2 传感器模块
+光敏/热敏电阻，红外接收管，阻值均与对应信号强度成反比
+由于电阻变化不易观察，故一般与定值电阻串联分压，得到模拟电压的输出，从而轻易的检测电压
+
+### 2. c语言基础
