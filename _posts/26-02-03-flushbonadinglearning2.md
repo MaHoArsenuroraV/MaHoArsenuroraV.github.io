@@ -103,3 +103,32 @@ IO口控制驱动电路间接控制，如三极管，PNP低电平，NPN反之(�
 # 三、程序实例
 
 ### 1. LED闪烁
+1. 使能时钟，配置端口模式
+2. GPIO输出函数
+   `GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);`  
+   将对应端口设为高电平
+   `GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);`  
+   将对应端口设为低电平
+   `GPIO_WriteBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, BitAction BitVal);`  
+   前两位仍为GPIO外设指定和端口指定，第三个为bitvalue来设置指定端口`Bit_RESET` `Bit_SET`分别设低/高电平  
+   `GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal);`  
+   可同时对16个端口进行写入操作  
+   <font color=green>若需要直接写1和0，则需要加上强制类型转换，将1和0类型转换为BitAction的枚举类型`(BitAction)0`</font>
+3. 主循环部分  
+    使用GPIO输出函数配合Delay函数  
+
+### 2. 跑马灯
+1. 使能时钟  
+2. 配置所用端口  
+   如一次性配置0 1 2三个端口  
+   ```
+   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_2;
+   ```
+   因为pin0对应数据为0x0001 pin1为0x0002 pin2为0x0004 pin3为0x0008，即为0001 0010 0100 1000，故可用按位或的方式进行批量选择  
+   `GPIO_Pin_ALL`即可选择全部位  
+   <font color=green>除此之外，时钟控制也能用按位或的方式操作多个外设，数据的规律多为每一位对应一个外设，GPIO_SetBits等函数也可以同理选择多引脚</font>  
+   使用上面的`GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal)`  
+   第二个参数为指定写到输出寄存器的值(直接写到GPIO的ODR寄存器中，故可以写`0x0001`，因为是低电平点亮，所以加按位取反符号`~`，即`~0x0001`)  
+
+### 3. 蜂鸣器
+用法同上
