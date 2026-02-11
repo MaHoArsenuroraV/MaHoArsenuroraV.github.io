@@ -142,4 +142,146 @@ IO口控制驱动电路间接控制，如三极管，PNP低电平，NPN反之(�
 光敏/热敏电阻，红外接收管，阻值均与对应信号强度成反比
 由于电阻变化不易观察，故一般与定值电阻串联分压，得到模拟电压的输出，从而轻易的检测电压
 
-### 2. c语言基础
+### 2. 硬件电路
+
+![](/images\posts\record\GPIO-input-hardware-circuit.png)
+
+上方两接法平常是高电平，按下按键转换为低电平；下方两接法相反  
+左侧两接法引脚必须为上拉/下拉输入模式；右侧两接法允许引脚浮空模式
+
+### 3. c语言基础
+#### 3.1 数据类型
+
+| 关键字 | 位数 | 表示范围 | stdint关键字 | ST关键字 |
+| :---: | :---: | :---: | :---: | :---: |
+| char | 8 | -128 ~ 127 | int8_t | s8 |
+| unsigned char | 8 | 0 ~ 255 | uint8_t | u8 |
+| short | 16 | -32768 ~ 32767 | int16_t | s16 |
+| unsigned short | 16 | 0 ~ 65535 | uint16_t | u16 |
+| int | 32 | -2147483648 ~ 2147483647 | int32_t | s32 |
+| unsigned int | 32 | 0 ~ 4294967295 | uint32_t | u32 |
+| long | 32 | -2147483648 ~ 2147483647 | | |
+| unsigned long | 32 | 0 ~ 4294967295 | | |
+| long long | 64 | -(2^63) ~ (2^63)-1 | int64_t | |
+| unsigned long long | 64 | 0 ~ (2^64)-1 | uint64_t | |
+| float | 32 | -3.4e38 ~ 3.4e38 | | |
+| double | 64 | -1.7e308 ~ 1.7e308 | | |
+
+#### 3.2 宏定义
+关键字: `#define`
+用途：用一个字符串代替一个数字，便于理解，防止出错；提取程序中经常出现参数，便于快速修改  
+eg.
+
+```
+#define ABC 12345   //定义
+int a = ABC         //引用 等效于 int a = 12345
+```
+
+#### 3.3 typedef
+关键词：`typedef`
+用途：将一个长变量类型名换个名字便于使用  
+eg.
+
+```
+typedef unsigned char unit8_t;  //定义
+uint8_t a;                      //引用 等效于unsigned char a;
+```
+  
+
+- 宏定义不需要`;`，`typedef`必须加
+- 宏定义无限制；`typedef`只能给变量类型改名字，对变量类型重命名使用`typedef`更安全
+
+#### 3.4 结构体
+关键字：`struct`
+用途：数据打包，不同类型变量的集合
+
+```
+struct{char x; int y; float z} StructName; //定义
+struct{
+   char x; 
+   int y; 
+   float z} StructName;
+StructName.x = 'A';                        //引用
+StructName.y = 66;
+pStructName->z = 1.23;                     //pStructName为结构体地址
+```
+
+结构体类型名称较长，可以用`typedef`更改类型名
+```
+typedef struct{char x; int y; float z} StructName_t;
+```
+
+#### 3.5 枚举
+关键字：`enum`
+用途：定义一个取值受限制的整形变量，用于限制变量取值范围；宏定义的集合
+```
+enum{FALSE = 0, TRUE = 1} EnumName;  //定义
+//花括号内指定变量取值，用`,`隔开，如果等于顺序的值，则可以省略
+//可以跟结构体一样换行写
+EnumName = FALSE                     //引用 等效EnumName = 0
+EnumName = TRUE
+```
+
+# 五、程序实例-GPIO输入
+### 1.模块化编程——封装函数
+- LED.h
+
+```
+#ifndef __LED_H   //如果没有定义LED字符串
+#define __LED_H   //定义LED字符串
+
+void LED_Init(void);
+void LED1_ON(void);
+void LED1_OFF(void);
+void LED2_ON(void);
+void LED2_OFF(void);
+
+#endif            //收尾ifndef
+
+```
+
+- LED.c
+```
+#include "stm32f10x.h"
+
+void LED_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	
+	GPIO_SetBits(GPIOA, GPIO_Pin_1 | GPIO_Pin_2);
+}
+
+void LED1_ON(void)
+{
+	GPIO_ResetBits(GPIOA, GPIO_Pin_1);
+}
+
+void LED1_OFF(void)
+{
+	GPIO_SetBits(GPIOA, GPIO_Pin_1);
+}
+
+void LED2_ON(void)
+{
+	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+}
+
+void LED2_OFF(void)
+{
+	GPIO_SetBits(GPIOA, GPIO_Pin_2);
+}
+```
+
+如此便可在`main.c`引用`LED.h`头文件以及`LED_Init()`初始化函数
+
+### 2. 按键控制LED
+添加key.c
+```
+
+```
