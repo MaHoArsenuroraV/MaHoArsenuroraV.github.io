@@ -134,4 +134,3 @@ STM32F103有八种模式，其中四种输入四种输出
 ### 2.3 点灯
 `GPIO_SetBits` 置高电平  
 `GPIO_ResetBits` 置低电平  
-- PC13所接LED为低电平有效  
