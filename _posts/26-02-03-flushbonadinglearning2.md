@@ -104,15 +104,15 @@ IO口控制驱动电路间接控制，如三极管，PNP低电平，NPN反之(�
 
 ### 1. LED闪烁
 1. 使能时钟，配置端口模式
-2. GPIO输出函数
+2. GPIO输出函数  
    `GPIO_SetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);`  
-   将对应端口设为高电平
+   将对应端口设为高电平  
    `GPIO_ResetBits(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);`  
-   将对应端口设为低电平
+   将对应端口设为低电平  
    `GPIO_WriteBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, BitAction BitVal);`  
-   前两位仍为GPIO外设指定和端口指定，第三个为bitvalue来设置指定端口`Bit_RESET` `Bit_SET`分别设低/高电平  
-   `GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal);`  
-   可同时对16个端口进行写入操作  
+   前两位仍为GPIO外设指定和端口指定，第三个为bitvalue来设置指定端口`Bit_RESET` `Bit_SET`分别设低/高电平    
+   `GPIO_Write(GPIO_TypeDef* GPIOx, uint16_t PortVal);`    
+   可同时对16个端口进行写入操作    
    <font color=green>若需要直接写1和0，则需要加上强制类型转换，将1和0类型转换为BitAction的枚举类型`(BitAction)0`</font>
 3. 主循环部分  
     使用GPIO输出函数配合Delay函数  
