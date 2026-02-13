@@ -12,7 +12,7 @@ STM32入门学习记录2：GPIO输出、输入
 
 学习自江协科技 [STM32入门教程-2023版 细致讲解 中文字幕](https://www.bilibili.com/video/BV1th411z7sn/?p=4&share_source=copy_web&vd_source=67b9019751b1734c92e834bdee04be24)
 
-# 一、简介
+# 一、GPIO简介
 GPIO，即(General Purpose Input Output) 通用输入输出口，可配置为8种输入输出模式  
 引脚电平：0V~3.3V，部分(带FT的)引脚可容忍5V,输出只能最高3.3V(电源为3.3V)  
 
@@ -243,6 +243,7 @@ void LED2_Turn(void);
 ```
 
 - LED.c
+
 ```
 #include "stm32f10x.h"
 
@@ -322,6 +323,7 @@ void LED2_Turn(void)
 
 #### 2.2 驱动程序封装(按键)
 - key.h
+
 ```
 #ifndef __KEY_H
 #define __KEY_H
@@ -335,6 +337,7 @@ void LED2_Turn(void);
 
 ```
 - key.c
+
 ```
 #include "stm32f10x.h"
 #include "Delay.h"
@@ -371,8 +374,10 @@ uint8_t Key_GetNum(void)
 }
 
 ```
+
 #### 2.3 主函数编写
 - main.c
+
 ```
 #include "stm32f10x.h"                  // Device header
 #include "Delay.h"
@@ -406,6 +411,7 @@ int main(void)
 #### 3.1 封装蜂鸣器驱动文件
 蜂鸣器与led同理，光敏传感器只需初始化和返回值函数即可
 - LightSensor.c
+
 ```
 #include "stm32f10x.h"
 
@@ -428,6 +434,7 @@ uint8_t LightSensor_Get(void)
 
 #### 3.2 主函数编写
 - main.c
+
 ```
 #include "stm32f10x.h"                  // Device header
 #include "Buzzer.h"
