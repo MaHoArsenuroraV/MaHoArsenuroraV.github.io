@@ -223,7 +223,7 @@ EnumName = TRUE
 ```
 
 # 五、程序实例-GPIO输入
-### 1.模块化编程——封装函数
+### 1.模块化编程——封装驱动程序 (LED)
 - LED.h
 
 ```
@@ -235,6 +235,8 @@ void LED1_ON(void);
 void LED1_OFF(void);
 void LED2_ON(void);
 void LED2_OFF(void);
+void LED1_Turn(void);
+void LED2_Turn(void);
 
 #endif            //收尾ifndef
 
@@ -267,6 +269,18 @@ void LED1_OFF(void)
 	GPIO_SetBits(GPIOA, GPIO_Pin_1);
 }
 
+void LED1_Turn(void)
+{
+	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_1)==0)
+	{
+		GPIO_SetBits(GPIOA, GPIO_Pin_1);
+	}
+	else
+	{
+		GPIO_ResetBits(GPIOA, GPIO_Pin_1);
+	}
+}
+
 void LED2_ON(void)
 {
 	GPIO_ResetBits(GPIOA, GPIO_Pin_2);
@@ -276,12 +290,167 @@ void LED2_OFF(void)
 {
 	GPIO_SetBits(GPIOA, GPIO_Pin_2);
 }
+
+void LED2_Turn(void)
+{
+	if (GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_2)==0)
+	{
+		GPIO_SetBits(GPIOA, GPIO_Pin_2);
+	}
+	else
+	{
+		GPIO_ResetBits(GPIOA, GPIO_Pin_2);
+	}
+}
+
 ```
 
 如此便可在`main.c`引用`LED.h`头文件以及`LED_Init()`初始化函数
 
 ### 2. 按键控制LED
-添加key.c
+
+#### 2.1 函数
+
+`GPIO_ReadInputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)`
+读取输入数据寄存器某一端口输入值，参数为端口，返回值为高低电平
+`GPIO_ReadInputData(GPIO_TypeDef* GPIOx);`
+整个输入数据寄存器
+`GPIO_ReadOutputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);`
+一般用于输出模式下查看输出
+`GPIO_ReadOutputData(GPIO_TypeDef* GPIOx);`
+读整个输出数据寄存器
+
+#### 2.2 驱动程序封装(按键)
+- key.h
 ```
+#ifndef __KEY_H
+#define __KEY_H
+
+void Key_Init(void);
+uint8_t Key_GetNum(void);
+void LED1_Turn(void);
+void LED2_Turn(void);
+
+#endif
+
+```
+- key.c
+```
+#include "stm32f10x.h"
+#include "Delay.h"
+
+
+void Key_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_1 | GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+uint8_t Key_GetNum(void)
+{
+	uint8_t KeyNum = 0;
+	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) ==0)
+	{
+		Delay_ms(20);
+		while (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) ==0)
+		Delay_ms(20);
+		KeyNum = 1;
+	}
+	if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_11) ==0)
+	{
+		Delay_ms(20);
+		while (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_11) ==0)
+		Delay_ms(20);
+		KeyNum = 2;
+	}
+	return KeyNum;
+}
+
+```
+#### 2.3 主函数编写
+- main.c
+```
+#include "stm32f10x.h"                  // Device header
+#include "Delay.h"
+#include "LED.h"
+#include "key.h"
+
+uint8_t KeyNum;
+
+int main(void)
+{
+	LED_Init();
+	Key_Init();
+	while (1)
+	{
+		KeyNum = Key_GetNum();
+		if (KeyNum == 1)
+		{
+			LED1_Turn();
+		}
+		if (KeyNum == 2)
+		{
+			LED2_Turn();
+		}
+	}
+}
+
+```
+
+### 3.光敏传感器控制蜂鸣器
+
+#### 3.1 封装蜂鸣器驱动文件
+蜂鸣器与led同理，光敏传感器只需初始化和返回值函数即可
+- LightSensor.c
+```
+#include "stm32f10x.h"
+
+void LightSensor_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+uint8_t LightSensor_Get(void)
+{
+	return GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_13);
+}
+
+```
+
+#### 3.2 主函数编写
+- main.c
+```
+#include "stm32f10x.h"                  // Device header
+#include "Buzzer.h"
+#include "Delay.h"
+#include "LightSensor.h"
+
+uint8_t KeyNum;
+
+int main(void)
+{
+	Buzzer_Init();
+	LightSensor_Init();
+	while (1)
+	{
+		if (LightSensor_Get() == 1)
+		{
+			Buzzer_ON();
+		}
+		else
+		{
+			Buzzer_OFF();
+		}
+	}
+}
 
 ```
