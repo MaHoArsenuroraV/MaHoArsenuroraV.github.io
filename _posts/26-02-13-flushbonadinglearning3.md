@@ -25,11 +25,15 @@ OLED（Organic Light Emitting Diode）：有机发光二极管
 
 ![](/images\posts\record\OLED-Hardware-circuit.png)
 
-SCL和SDA为I2C通信引脚，接在单片机I2C通信引脚上，使用GPIO模拟I2C通信则接在GPIO引脚  
+SCL和SDA为I2C通信引脚，接在单片机I2C通信引脚上，使用GPIO模拟I2C通信则接在GPIO引脚   
 7针脚剩下的则是SPI通信引脚
 
 ### 3. 驱动函数
 ![](/images\posts\record\OLED-driving-function.png)
+- 参数1为行，参数2为列，显示数字的最后一个参数为长度
+- c语言不支持直接写二进制数字
+- 若想清除部分字符，则可用显示字符串替换为空格即可
+- 使用时将OLED.c中的端口改为所用的
 
 # 二、OLED调试工具
 ### 1. 本课程内套件OLED可显示内容 
