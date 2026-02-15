@@ -1,6 +1,6 @@
 ---
 layout: post
-title: STM入门学习记录2
+title: STM入门学习记录2-GPIO
 categories: [STM32, c语言]
 description: STM入门学习记录
 keywards: note,record,STM32,c语言

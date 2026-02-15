@@ -1,6 +1,6 @@
 ---
 layout: post
-title: STM入门学习记录1
+title: STM入门学习记录1-新建工程与点灯
 categories: STM32
 description: STM入门学习记录
 keywards: note,record,STM32
