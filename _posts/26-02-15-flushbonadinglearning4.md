@@ -87,3 +87,92 @@ AFIO主要用于引脚复用功能的选择和重定义
 
 ![](/images\posts\record\Rorary-Encoder-Hardware-circuit.png)
 AB则为两相输出
+
+# 二、程序实例
+### 1. 对射式红外计数器
+#### 1.1 配置GPIO→NVIC联通
+1. 配置RCC，将涉及到的外设时钟开启
+2. 配置GPIO，选择端口为输入模式
+3. 配置AFIO，选择所用GPIO，将其连接到EXTI
+4. 配置EXTI，选择边沿触发方式
+选择触发响应方式，可选择中断响应和事件响应
+5. 配置NVIC，为中断选择合适优先级
+- EXTI时钟是打开的 不需要再开启，寄存器中无EXTI时钟控制位
+- NVIC是内核外设，所有内核外设的时钟也不需要开启
+
+#### 1.2 AFIO函数
+`GPIO_AFIODeInit(void)`  
+清除AFIO外设配置  
+
+`GPIO_PinLockConfig(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)`  
+锁定GPIO指定引脚配置  
+
+`GPIO_EventOutputConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource)`   
+`GPIO_EventOutputCmd(FunctionalState NewState)`   
+配置AFIO事件输出功能  
+
+`GPIO_PinRemapConfig(uint32_t GPIO_Remap, FunctionalState NewState)`  
+引脚重映射   
+两个参数分别为重映射方式和新的状态  
+  
+`GPIO_EXTILineConfig(uint8_t GPIO_PortSource, uint8_t GPIO_PinSource)`  
+配置AFIO的数据选择器，选择想要的中断引脚  
+
+`GPIO_ETH_MediaInterfaceConfig(uint32_t GPIO_ETH_MediaInterface);`  
+和以太网有关  
+
+#### 1.3 EXTI函数
+`EXTI_DeInit(void)`  
+清除EXTI配置  
+  
+`EXTI_Init(EXTI_InitTypeDef* EXTI_InitStruct)`  
+初始化EXTI  
+  
+`EXTI_StructInit(EXTI_InitTypeDef* EXTI_InitStruct)`  
+结构体赋默认值  
+  
+`EXTI_GenerateSWInterrupt(uint32_t EXTI_Line)`  
+参数给一个指定中断线，即可软件触发一次外部中断  
+  
+
+`FlagStatus EXTI_GetFlagStatus(uint32_t EXTI_Line);`  
+获取指定标志位是否置1    
+  
+`void EXTI_ClearFlag(uint32_t EXTI_Line);`  
+对置1标志位清除  
+  
+`ITStatus EXTI_GetITStatus(uint32_t EXTI_Line);`  
+获取中断标志位是否置1  
+  
+`void EXTI_ClearITPendingBit(uint32_t EXTI_Line);`  
+清除终端挂起标志位  
+
+故前两者适合于在主程序中查看和清除标志位，后两者只能用于中断函数中
+
+也需要定义EXTI的结构体，其有四个成员
+- EXTI_Line
+  `EXTI_Linex`
+- EXTI_LineCmd
+  `ENABLE` / `DISABLE`
+- EXTI_Mode
+  `EXTI_Mode_Event` / `EXTI_Mode_Interrupt`
+- EXTI_Trigger
+  `EXTI_Trigger_Rising` / `EXTI_Trigger_Falling` / `EXTI_Trigger_Rising_Falling`  
+
+#### 1.4 NVIC函数
+`NVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup)`  
+中断分组，参数为中断分组方式  
+  
+`NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)`  
+根据结构体初始化NVIC  
+
+`NVIC_SetVectorTable(uint32_t NVIC_VectTab, uint32_t Offset)`  
+设置中断向量表  
+
+`NVIC_SystemLPConfig(uint8_t LowPowerMode, FunctionalState NewState)`  
+系统低功耗配置  
+
+`SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)`  
+  
+  
+pre-emption priority and subpriority (抢占优先级和响应优先级)
