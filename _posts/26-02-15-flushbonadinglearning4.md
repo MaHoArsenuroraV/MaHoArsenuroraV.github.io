@@ -150,14 +150,14 @@ AB则为两相输出
 故前两者适合于在主程序中查看和清除标志位，后两者只能用于中断函数中
 
 也需要定义EXTI的结构体，其有四个成员
-- EXTI_Line
-  `EXTI_Linex`
-- EXTI_LineCmd
-  `ENABLE` / `DISABLE`
-- EXTI_Mode
-  `EXTI_Mode_Event` / `EXTI_Mode_Interrupt`
-- EXTI_Trigger
-  `EXTI_Trigger_Rising` / `EXTI_Trigger_Falling` / `EXTI_Trigger_Rising_Falling`  
+- EXTI_Line  
+  `EXTI_Linex`  
+- EXTI_LineCmd  
+  `ENABLE` / `DISABLE`  
+- EXTI_Mode  
+  `EXTI_Mode_Event` / `EXTI_Mode_Interrupt`  
+- EXTI_Trigger  
+  `EXTI_Trigger_Rising` / `EXTI_Trigger_Falling` / `EXTI_Trigger_Rising_Falling`    
 
 #### 1.4 NVIC函数
 `NVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup)`  
