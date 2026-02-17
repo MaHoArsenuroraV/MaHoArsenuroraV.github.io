@@ -162,6 +162,20 @@ AB则为两相输出
 #### 1.4 NVIC函数
 `NVIC_PriorityGroupConfig(uint32_t NVIC_PriorityGroup)`  
 中断分组，参数为中断分组方式  
+```
+  *     @arg NVIC_PriorityGroup_0: 0 bits for pre-emption priority
+  *                                4 bits for subpriority
+  *     @arg NVIC_PriorityGroup_1: 1 bits for pre-emption priority
+  *                                3 bits for subpriority
+  *     @arg NVIC_PriorityGroup_2: 2 bits for pre-emption priority
+  *                                2 bits for subpriority
+  *     @arg NVIC_PriorityGroup_3: 3 bits for pre-emption priority
+  *                                1 bits for subpriority
+  *     @arg NVIC_PriorityGroup_4: 4 bits for pre-emption priority
+  *                                0 bits for subpriority
+pre-emption priority and subpriority (抢占优先级和响应优先级)
+```
+**若在模块中进行分组，则需保证各模块中均为相同分组**，或放在主函数的开始
   
 `NVIC_Init(NVIC_InitTypeDef* NVIC_InitStruct)`  
 根据结构体初始化NVIC  
@@ -174,5 +188,199 @@ AB则为两相输出
 
 `SysTick_CLKSourceConfig(uint32_t SysTick_CLKSource)`  
   
-  
-pre-emption priority and subpriority (抢占优先级和响应优先级)
+NVIC结构体成员(4个)
+- NVIC_IRQChannel
+  指定中断通道
+- NVIC_IRQChannelCmd
+  指定中断通道使能/失能
+  `ENABLE` / `DISABLE`
+- NVIC_IRQChannelPreemptionPriority
+  指定所选参数的抢占优先级
+  取值范围视分组而定，为 $0$ ~ $2^n-1$
+- NVIC_IRQChannelSubPriority  
+  指定所选参数的响应优先级
+  取值范围视分组而定，为 $0$ ~ $2^n-1$
+
+#### 1.5 中断函数
+中断函数的名字是固定的，可以在启动文件中的中断向量表找到
+**中断函数都是无参无返回值的**
+1. 判断中断标志位是否为想要的EXTI
+2. 中断函数结束后，清除中断标志位
+
+#### 1.6 程序代码
+IO口接PB14
+- CountSensor.c
+```
+#include "stm32f10x.h"
+
+uint16_t  CountSensor_Count;
+
+void CountSensor_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource14);
+	
+	EXTI_InitTypeDef EXTI_InitStructure;
+	EXTI_InitStructure.EXTI_Line = EXTI_Line14;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_Init(&EXTI_InitStructure);
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI15_10_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+uint16_t CountSensor_Get(void)
+{
+	return CountSensor_Count;
+}
+
+void EXTI15_10_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line14) ==SET)
+	{
+		CountSensor_Count++; 
+		EXTI_ClearITPendingBit(EXTI_Line14);
+	}
+}
+
+```
+
+- main.c
+```
+#include "stm32f10x.h"                  // Device header
+#include "Delay.h"
+#include "OLED.h"
+#include "CountSensor.h"
+
+int main(void)
+{
+	OLED_Init();
+	CountSensor_Init();
+	
+	OLED_ShowString(1, 1, "Count:");
+	
+	
+	while (1)
+	{
+		OLED_ShowNum(1, 7, CountSensor_Get() ,5);
+	}
+}
+```
+
+### 2. 旋转编码器计次
+AB输出分别接PB01
+将上程序中端口更改，并添加对应函数
+本程序不直接返回原值，而是原值的变化量，结果由主函数自行计算得到
+- Encoder.c
+```
+#include "stm32f10x.h"
+
+int16_t Encoder_Count;
+
+void Encoder_Init(void)
+{
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+	
+	GPIO_InitTypeDef GPIO_InitStructure;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_EXTILineConfig(GPIO_PortSourceGPIOB, GPIO_PinSource14);
+	
+	EXTI_InitTypeDef EXTI_InitStructure;
+	EXTI_InitStructure.EXTI_Line = EXTI_Line0 | EXTI_Line1;
+	EXTI_InitStructure.EXTI_LineCmd = ENABLE;
+	EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
+	EXTI_InitStructure.EXTI_Trigger = EXTI_Trigger_Falling;
+	EXTI_Init(&EXTI_InitStructure);
+	
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	
+	NVIC_InitTypeDef NVIC_InitStructure;
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 1;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	NVIC_InitStructure.NVIC_IRQChannel = EXTI1_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 1;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 2;
+	NVIC_Init(&NVIC_InitStructure);
+}
+
+int16_t Encoder_Get(void)
+{
+	int16_t Temp = Encoder_Count;
+	Encoder_Count = 0;
+	return Temp;
+}
+
+void EXTI0_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line0) == SET)
+	{
+		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_1) == 0)
+		{
+			Encoder_Count--;
+		}
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
+}
+
+void EXTI1_IRQHandler(void)
+{
+	if (EXTI_GetITStatus(EXTI_Line1) == SET)
+	{
+		if (GPIO_ReadInputDataBit(GPIOB, GPIO_Pin_0) ==0)
+		{
+			Encoder_Count++;
+		}
+		EXTI_ClearITPendingBit(EXTI_Line0);
+	}
+}
+```
+
+- main.c
+```
+#include "stm32f10x.h"                  // Device header
+#include "Delay.h"
+#include "OLED.h"
+#include "Encoder.h"
+
+int16_t Num;
+
+int main(void)
+{
+	OLED_Init();
+	Encoder_Init();
+	
+	OLED_ShowString(1, 1, "Count:");
+	
+	
+	while (1)
+	{
+		Num += Encoder_Get();
+		OLED_ShowSignedNum(1, 7, Num ,5);
+	}
+}
+
+```
